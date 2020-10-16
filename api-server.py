@@ -7,6 +7,8 @@ from flask import request,jsonify
 from flask import abort
 import time
 import json
+from flask import Flask, redirect, url_for
+
 app={100002:{'dev':'@cdappkey#','sit':'rhappkey124!','uat':'!CDappkey#'},100008:{'dev':'@dhy123appkey#','sit':'@dhy123appkey#','uat':'@dhy123appkey#'}}   #集中存放appid和appkey
 
 class local_exp(Exception):
@@ -111,7 +113,7 @@ def test(appid):
         abort(404)
     return jsonify({"aa":td[0]})
 
-@api_s.route('/test1',methods=['POST'])
+@api_s.route('/test1',methods=['POST','GET'])
 def test1():
     # data=request.json
     # data=request.form
@@ -140,5 +142,20 @@ def clear_code_limit(phone):
     Temp_Str = os.popen(('redis-cli -c -h 10.101.72.69 -p 7000 -a hdiot del USERCENTER:Phone:sum_"%s"_num')%phone).read()
     return jsonify({"status":Temp_Str})
 
+#  ####新增静态页面
+@api_s.route('/success/<name>')
+def success(name):
+    return 'send =====> %s' % name
+
+@api_s.route('/send',methods = ['POST', 'GET'])
+def send():
+    if request.method == 'POST':
+        user = request.form['nm']
+        return redirect(url_for('success', name = user))
+    else:
+        user = request.args.get('nm')
+        return redirect(url_for('success', name = user))
+
+
 if __name__== '__main__':
-    api_s.run(debug =True, port =8855)
+    api_s.run(debug=True)
