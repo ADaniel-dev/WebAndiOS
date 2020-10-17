@@ -165,7 +165,7 @@ def clear_code_limit(phone):
 @api_s.route('/success/<name>')
 def success(name):
     localMessage.setMessage(name)
-    return 'send success=====> %s' % name
+    return jsonify({"value": name, "status": "success"})
 
 '''
 接收前端发过来的参数
