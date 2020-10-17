@@ -33,7 +33,24 @@ class local_exp(Exception):
     def no_silent_time(cls):
         return {"code":9006,"msg":"failed","result":{"unRegState":"","reason":"silent_time is a required parameter, parameter missing"}}
 
+'''
+本地保存消息
+'''
+class localMessage(object):
+    def __init__(self):
+        self.message = ''
+        pass
+
+    def setMessage(self,message):
+        if self.message != message:
+            self.message = message
+
+    def getMessage(self):
+        return self.message
+
+
 api_s=flask.Flask(__name__)
+localMessage=localMessage()
 
 def sig_chk(appid,appkey,timestamp,sig):
     tmp_sig="appid=%s&appkey=%s&timestamp=%s"%(appid,appkey,timestamp)
@@ -142,11 +159,17 @@ def clear_code_limit(phone):
     Temp_Str = os.popen(('redis-cli -c -h 10.101.72.69 -p 7000 -a hdiot del USERCENTER:Phone:sum_"%s"_num')%phone).read()
     return jsonify({"status":Temp_Str})
 
-#  ####新增静态页面
+'''
+####新增静态页面
+'''
 @api_s.route('/success/<name>')
 def success(name):
-    return 'send =====> %s' % name
+    localMessage.setMessage(name)
+    return 'send success=====> %s' % name
 
+'''
+接收前端发过来的参数
+'''
 @api_s.route('/send',methods = ['POST', 'GET'])
 def send():
     if request.method == 'POST':
@@ -156,6 +179,13 @@ def send():
         user = request.args.get('nm')
         return redirect(url_for('success', name = user))
 
+'''
+#发送存储的消息
+'''
+@api_s.route('/get',methods = ['POST', 'GET'])
+def get():
+    return jsonify({"value": localMessage.getMessage(), "status": "success"})
 
-if __name__== '__main__':
+
+if __name__ == '__main__':
     api_s.run(debug=True)
