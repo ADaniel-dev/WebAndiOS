@@ -7,7 +7,7 @@ from flask import request,jsonify
 from flask import abort
 import time
 import json
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 
 app={100002:{'dev':'@cdappkey#','sit':'rhappkey124!','uat':'!CDappkey#'},100008:{'dev':'@dhy123appkey#','sit':'@dhy123appkey#','uat':'@dhy123appkey#'}}   #集中存放appid和appkey
 
@@ -185,6 +185,13 @@ def send():
 @api_s.route('/get',methods = ['POST', 'GET'])
 def get():
     return jsonify({"value": localMessage.getMessage(), "status": "success"})
+
+'''
+静态页面展示
+'''
+@api_s.route('/')
+def index():
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
