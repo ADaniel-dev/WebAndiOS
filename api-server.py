@@ -195,4 +195,4 @@ def index():
 
 
 if __name__ == '__main__':
-    api_s.run(debug=True)
+    api_s.run(debug=True, host='172.26.83.148', port=5000)
